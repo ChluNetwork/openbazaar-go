@@ -6,6 +6,7 @@ import (
 	"github.com/ipfs/go-ipfs/repo"
 	"github.com/ipfs/go-ipfs/repo/config"
 	"time"
+	"io/ioutil"
 )
 
 var DefaultBootstrapAddresses = []string{
@@ -24,6 +25,26 @@ var DataPushNodes = []string{
 	"QmY8puEnVx66uEet64gAf4VZRo7oUyMCwG6KdB9KM92EGQ",
 	"QmPPg2qeF3n2KvTRXRZLaTwHCw8JxzF4uZK93RfMoDvf2o",
 	"QmPPegaeM4rXfQDF3uu784d93pLEzV8A4zXU7akEgYnTFd",
+}
+
+type JsonConfig struct {
+	data interface{}
+	filePath string
+}
+
+func (config JsonConfig) Load() (error) {
+	configFile, err := ioutil.ReadFile(config.filePath)
+	if err != nil {
+		return err
+	}
+	return json.Unmarshal(configFile, config.data)
+}
+
+func GetConfigProperty(config interface{}, propertyName string, propertyType interface{}) (interface{}) {
+	cfg, ok := config.(propertyType)
+	if !ok {
+		return nil, MalformedConfigError
+	}	
 }
 
 type APIConfig struct {
